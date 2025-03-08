@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import TaskItem from "./TaskItem";
 import { useTask } from "@/contexts/TaskContext";
@@ -140,13 +139,11 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
     });
   };
 
-  // Filter tasks based on field filters
   const getFilteredTasks = () => {
     return filteredTasks.filter(task => {
       for (const [fieldId, filterValue] of Object.entries(fieldFilters)) {
         if (!filterValue) continue;
         
-        // @ts-ignore - Dynamic access
         const fieldValue = task[fieldId]?.toString().toLowerCase();
         if (fieldValue && !fieldValue.includes(filterValue.toLowerCase())) {
           return false;
@@ -159,66 +156,44 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
   const finalFilteredTasks = getFilteredTasks();
 
   return (
-    <div className="container max-w-full py-6 px-6">
-      <div className="flex justify-end mb-5">
+    <div className="container max-w-full pb-6">
+      <div className="flex justify-end mb-5 px-6 pt-6">
         <Button 
-          className="bg-[#1e293b] hover:bg-[#0f172a] text-white flex items-center gap-1"
+          className="bg-[#1e293b] hover:bg-[#0f172a] text-white gap-2 px-4 py-2 h-auto"
           onClick={() => setShowAddField(true)}
         >
-          <Plus className="h-4 w-4" /> Добавить поле
+          <Plus className="h-5 w-5" /> Добавить поле
         </Button>
       </div>
       
-      <div className="bg-[#2d2d2d] flex rounded-t-lg text-white font-medium py-4 px-6">
-        {fields.map((field) => (
-          <div 
-            key={field.id} 
-            className={field.id === 'task' ? 'flex-1 max-w-md' : 'w-32 flex-shrink-0'}
-            style={field.id === 'status' ? {width: '170px'} : {}}
-          >
-            <div className="flex items-center">
-              <div 
-                className="cursor-pointer text-sm"
-                onClick={() => openFieldSettings(field)}
-              >
-                {field.name}
-              </div>
-              
-              {field.id !== 'task' && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="ml-1 inline-flex">
-                    <Filter className="h-3 w-3 text-gray-400" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <div className="p-2">
-                      <Input 
-                        placeholder="Фильтр..." 
-                        value={fieldFilters[field.id] || ''}
-                        onChange={(e) => applyFilter(field.id, e.target.value)}
-                        className="text-black"
-                      />
-                    </div>
-                    {field.type === 'list' && field.options && (
-                      <div>
-                        {field.options.map(option => (
-                          <DropdownMenuItem 
-                            key={option.id}
-                            onClick={() => applyFilter(field.id, option.value)}
-                          >
-                            {option.value}
-                          </DropdownMenuItem>
-                        ))}
-                      </div>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
+      <div className="bg-[#2d2d2d] text-white">
+        <div className="flex h-[60px] px-6 items-center font-medium">
+          <div className="w-[60px] flex-shrink-0 flex items-center text-sm">
+            ID <Filter className="h-3 w-3 ml-1 text-gray-400" />
           </div>
-        ))}
+          <div className="w-[100px] flex-shrink-0 flex items-center text-sm">
+            Дата <Filter className="h-3 w-3 ml-1 text-gray-400" />
+          </div>
+          <div className="w-[120px] flex-shrink-0 flex items-center text-sm">
+            Результат <Filter className="h-3 w-3 ml-1 text-gray-400" />
+          </div>
+          <div className="w-[120px] flex-shrink-0 flex items-center text-sm">
+            Объект <Filter className="h-3 w-3 ml-1 text-gray-400" />
+          </div>
+          <div className="flex-1 text-sm">
+            Задача
+          </div>
+          <div className="w-[180px] flex-shrink-0 flex items-center text-sm">
+            Статус <Filter className="h-3 w-3 ml-1 text-gray-400" />
+          </div>
+          <div className="w-[120px] flex-shrink-0 flex items-center text-sm">
+            Исполнитель <Filter className="h-3 w-3 ml-1 text-gray-400" />
+          </div>
+          <div className="w-[60px]"></div>
+        </div>
       </div>
       
-      <div>
+      <div className="bg-white">
         {finalFilteredTasks.map((task) => (
           <TaskItem
             key={task.id}
@@ -229,7 +204,6 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
         ))}
       </div>
 
-      {/* Add Field Dialog */}
       <Dialog open={showAddField} onOpenChange={setShowAddField}>
         <DialogContent>
           <DialogHeader>
@@ -271,7 +245,6 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
         </DialogContent>
       </Dialog>
 
-      {/* Field Settings Dialog */}
       <Dialog open={showFieldSettings} onOpenChange={setShowFieldSettings}>
         <DialogContent>
           <DialogHeader>

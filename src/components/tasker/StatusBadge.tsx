@@ -46,10 +46,10 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
     <DropdownMenu>
       <DropdownMenuTrigger className="w-full">
         <div
-          className={`flex items-center justify-between px-4 py-2 rounded-md ${getStatusStyles()}`}
+          className={`flex items-center justify-between rounded-md px-3 py-2 min-w-[140px] ${getStatusStyles()}`}
         >
-          <span className="text-sm">{label}</span>
-          <ChevronDown className="h-3 w-3 ml-2" />
+          <span className="text-sm font-medium">{label}</span>
+          <ChevronDown className="h-4 w-4 ml-2" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

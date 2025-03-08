@@ -45,36 +45,38 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
   return (
     <>
-      <div
-        className="bg-white flex items-center border-b border-gray-100 py-4 px-6 cursor-pointer"
-        onClick={toggleExpand}
-      >
-        <div className="w-10 flex-shrink-0 text-sm">{id}</div>
-        <div className="w-16 flex-shrink-0 text-sm">{date}</div>
-        <div className="w-24 flex-shrink-0 text-sm">{result}</div>
-        <div className="w-28 flex-shrink-0 text-sm">{object}</div>
-        <div className="flex items-center gap-2 flex-1 max-w-md">
-          <Circle className="h-4 w-4 fill-current text-black" />
-          <div className="flex-1 text-base font-medium text-left">{task}</div>
-          {subTasks && subTasks.length > 0 && (
-            expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
-          )}
-        </div>
-        <div className="w-[170px] flex-shrink-0">
-          <StatusBadge 
-            status={status} 
-            label={statusLabel} 
-            onStatusChange={handleStatusChange}
-          />
-        </div>
-        <div className="w-32 flex-shrink-0 text-sm">{assignee}</div>
-        <div className="ml-4 text-gray-400">
-          <MoreHorizontal className="h-5 w-5" />
+      <div className="border-t border-gray-100 cursor-pointer">
+        <div 
+          className="flex items-center h-[60px]"
+          onClick={toggleExpand}
+        >
+          <div className="w-[60px] flex-shrink-0 text-sm text-center">{id}</div>
+          <div className="w-[100px] flex-shrink-0 text-sm">{date}</div>
+          <div className="w-[120px] flex-shrink-0 text-sm">{result}</div>
+          <div className="w-[120px] flex-shrink-0 text-sm">{object}</div>
+          <div className="flex items-center gap-2 flex-1">
+            <Circle className="h-5 w-5 fill-black" />
+            <div className="flex-1 text-base font-medium text-left">{task}</div>
+            {subTasks && subTasks.length > 0 && (
+              expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+            )}
+          </div>
+          <div className="w-[180px] flex-shrink-0">
+            <StatusBadge 
+              status={status} 
+              label={statusLabel} 
+              onStatusChange={handleStatusChange}
+            />
+          </div>
+          <div className="w-[120px] flex-shrink-0 text-sm">{assignee}</div>
+          <div className="flex w-[60px] justify-center text-gray-400">
+            <MoreHorizontal className="h-5 w-5" />
+          </div>
         </div>
       </div>
       {expanded && subTasks && subTasks.length > 0 && (
-        <div className="pl-[400px]">
-          {subTasks.map((subTask, index) => (
+        <div className="pl-[400px] bg-[#f9f9f9]">
+          {subTasks.map((subTask) => (
             <SubTask
               key={subTask.id}
               {...subTask}

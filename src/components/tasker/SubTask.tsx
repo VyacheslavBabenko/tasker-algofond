@@ -18,13 +18,13 @@ const SubTask: React.FC<SubTaskProps> = ({
   onStatusChange
 }) => {
   return (
-    <div className="bg-[#f9f9f9] flex items-center border-b border-gray-100 py-4 px-6">
-      <div className="w-24 flex-shrink-0 text-sm text-gray-600">{object}</div>
-      <div className="flex gap-2 items-center flex-1 max-w-md">
-        <Circle className="h-4 w-4 stroke-current stroke-2 text-gray-600 fill-none" />
+    <div className="flex items-center h-[60px] border-t border-gray-100">
+      <div className="ml-4 w-32 flex-shrink-0 text-sm text-gray-600">{object}</div>
+      <div className="flex gap-2 items-center flex-1">
+        <Circle className="h-5 w-5 stroke-current stroke-1 text-gray-400" />
         <div className="flex-1 text-sm text-left text-gray-700">{description}</div>
       </div>
-      <div className="w-[170px] flex-shrink-0">
+      <div className="w-[180px] flex-shrink-0">
         <StatusBadge 
           status={status} 
           label={statusLabel} 
@@ -32,7 +32,7 @@ const SubTask: React.FC<SubTaskProps> = ({
         />
       </div>
       <div className="w-32 flex-shrink-0 text-sm text-gray-600">{assignee}</div>
-      <div className="ml-4 text-gray-400">
+      <div className="flex w-[60px] justify-center text-gray-400">
         <MoreHorizontal className="h-5 w-5" />
       </div>
     </div>
