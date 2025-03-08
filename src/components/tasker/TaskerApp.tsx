@@ -42,32 +42,32 @@ const TaskerApp: React.FC = () => {
 
   return (
     <TaskProvider>
-      <div className="bg-[#f5f8f9] min-h-screen flex flex-col">
+      <div className="flex flex-col min-h-screen">
         <Header />
         
-        <div className="px-10 py-4 flex items-center justify-between border-b border-[#e3e3e3]">
-          <div className="flex items-center gap-5">
-            <h2 className="text-xl font-medium">Область: Проект</h2>
+        <div className="border-b border-gray-200">
+          <div className="container max-w-full px-6 py-3 flex items-center gap-2">
+            <h2 className="text-base font-medium mr-2">Область: Проект</h2>
             <button 
-              className="p-2 rounded-md hover:bg-gray-200"
+              className="p-1 rounded-md hover:bg-gray-100"
               onClick={toggleBoardSettings}
             >
-              <Settings className="h-5 w-5 text-gray-500" />
+              <Settings className="h-4 w-4 text-gray-500" />
             </button>
           </div>
           
-          <div className="flex gap-4">
+          <div className="container max-w-full flex px-6 pb-3">
             {boards.map(board => (
               <button
                 key={board.id}
-                className={`px-4 py-2 rounded-md ${activeBoard === board.id ? 'bg-[#2d2d2d] text-white' : 'bg-white text-black'}`}
+                className={`px-4 py-2 rounded-md mr-2 ${activeBoard === board.id ? 'bg-[#2d2d2d] text-white' : 'bg-white border border-gray-200 text-gray-800'}`}
                 onClick={() => setActiveBoard(board.id)}
               >
                 {board.name}
               </button>
             ))}
             <button 
-              className="bg-white px-4 py-2 rounded-md flex items-center"
+              className="bg-white border border-gray-200 px-4 py-2 rounded-md flex items-center"
               onClick={handleAddBoard}
             >
               <span className="mr-1">+</span> Доска
@@ -83,7 +83,7 @@ const TaskerApp: React.FC = () => {
           onCloseSettings={() => setShowBoardSettings(false)}
         />
         
-        <div className="flex-1">
+        <div className="flex-1 bg-[#f5f8f9]">
           <TaskList boardId={activeBoard} />
         </div>
         <FilterBar />

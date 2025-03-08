@@ -14,7 +14,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
+  DialogFooter,
+  DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -158,19 +159,26 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
   const finalFilteredTasks = getFilteredTasks();
 
   return (
-    <div className="w-full text-xl tracking-[0.12px] mt-10 px-10">
-      <div className="flex justify-end mb-4">
-        <Button onClick={() => setShowAddField(true)}>
-          <Plus className="h-4 w-4 mr-2" /> Добавить поле
+    <div className="container max-w-full py-6 px-6">
+      <div className="flex justify-end mb-5">
+        <Button 
+          className="bg-[#1e293b] hover:bg-[#0f172a] text-white flex items-center gap-1"
+          onClick={() => setShowAddField(true)}
+        >
+          <Plus className="h-4 w-4" /> Добавить поле
         </Button>
       </div>
       
-      <div className="bg-[#2d2d2d] flex w-full items-center gap-[60px] text-white font-medium px-5 py-[18px] rounded-[10px]">
+      <div className="bg-[#2d2d2d] flex rounded-t-lg text-white font-medium py-4 px-6">
         {fields.map((field) => (
-          <div key={field.id} className={field.id === 'task' ? 'w-[400px]' : 'w-[150px]'}>
-            <div className="flex items-center justify-between">
+          <div 
+            key={field.id} 
+            className={field.id === 'task' ? 'flex-1 max-w-md' : 'w-32 flex-shrink-0'}
+            style={field.id === 'status' ? {width: '170px'} : {}}
+          >
+            <div className="flex items-center">
               <div 
-                className="cursor-pointer"
+                className="cursor-pointer text-sm"
                 onClick={() => openFieldSettings(field)}
               >
                 {field.name}
@@ -178,8 +186,8 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
               
               {field.id !== 'task' && (
                 <DropdownMenu>
-                  <DropdownMenuTrigger>
-                    <Filter className="h-3.5 w-3.5 ml-2" />
+                  <DropdownMenuTrigger className="ml-1 inline-flex">
+                    <Filter className="h-3 w-3 text-gray-400" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <div className="p-2">
@@ -187,6 +195,7 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
                         placeholder="Фильтр..." 
                         value={fieldFilters[field.id] || ''}
                         onChange={(e) => applyFilter(field.id, e.target.value)}
+                        className="text-black"
                       />
                     </div>
                     {field.type === 'list' && field.options && (
@@ -209,7 +218,7 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
         ))}
       </div>
       
-      <div className="text-[#696974] mt-5">
+      <div>
         {finalFilteredTasks.map((task) => (
           <TaskItem
             key={task.id}
@@ -225,6 +234,7 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Добавить поле</DialogTitle>
+            <DialogDescription>Создайте новое поле для вашей доски</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">

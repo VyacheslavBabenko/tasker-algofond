@@ -1,6 +1,12 @@
 
 import React from "react";
 import { ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 type StatusType = "inProgress" | "take" | "check" | "blocked";
 
@@ -30,41 +36,37 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
     }
   };
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Здесь можно добавить логику для смены статуса
-    const newStatus = getNextStatus(status);
+  const handleStatusChange = (newStatus: StatusType) => {
     if (onStatusChange) {
       onStatusChange(newStatus);
     }
   };
 
-  const getNextStatus = (currentStatus: StatusType): StatusType => {
-    switch (currentStatus) {
-      case "inProgress":
-        return "check";
-      case "take":
-        return "inProgress";
-      case "check":
-        return "blocked";
-      case "blocked":
-        return "take";
-      default:
-        return "take";
-    }
-  };
-
   return (
-    <div
-      className={`flex items-center justify-between gap-2 px-5 py-2.5 rounded-[10px] ${getStatusStyles()}`}
-      style={{ width: "170px" }}
-    >
-      <div>{label}</div>
-      <ChevronDown 
-        className="h-2.5 w-2.5" 
-        onClick={handleClick}
-      />
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="w-full">
+        <div
+          className={`flex items-center justify-between px-4 py-2 rounded-md ${getStatusStyles()}`}
+        >
+          <span className="text-sm">{label}</span>
+          <ChevronDown className="h-3 w-3 ml-2" />
+        </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem onClick={() => handleStatusChange("inProgress")}>
+          В работе
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleStatusChange("take")}>
+          Взять
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleStatusChange("check")}>
+          Проверить
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleStatusChange("blocked")}>
+          Блок софта
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

@@ -46,48 +46,40 @@ const TaskItem: React.FC<TaskItemProps> = ({
   return (
     <>
       <div
-        className="bg-white flex w-full items-center justify-between mt-2.5 pl-5 pr-10 py-5 rounded-[10px] cursor-pointer"
+        className="bg-white flex items-center border-b border-gray-100 py-4 px-6 cursor-pointer"
         onClick={toggleExpand}
       >
-        <div className="flex items-center gap-[60px]">
-          <div className="w-[100px]">{id}</div>
-          <div className="w-[100px]">{date}</div>
-          <div className="w-[120px]">{result}</div>
-          <div className="w-[210px]">{object}</div>
-          <div className="flex items-center gap-2.5 font-medium w-[400px]">
-            <Circle className="h-[18px] w-[18px] fill-current text-black" />
-            <div className="flex-1 text-left">{task}</div>
-            {subTasks && subTasks.length > 0 && (
-              expanded ? <ChevronUp className="h-2.5 w-2.5" /> : <ChevronDown className="h-2.5 w-2.5" />
-            )}
-          </div>
+        <div className="w-10 flex-shrink-0 text-sm">{id}</div>
+        <div className="w-16 flex-shrink-0 text-sm">{date}</div>
+        <div className="w-24 flex-shrink-0 text-sm">{result}</div>
+        <div className="w-28 flex-shrink-0 text-sm">{object}</div>
+        <div className="flex items-center gap-2 flex-1 max-w-md">
+          <Circle className="h-4 w-4 fill-current text-black" />
+          <div className="flex-1 text-base font-medium text-left">{task}</div>
+          {subTasks && subTasks.length > 0 && (
+            expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+          )}
+        </div>
+        <div className="w-[170px] flex-shrink-0">
           <StatusBadge 
             status={status} 
             label={statusLabel} 
             onStatusChange={handleStatusChange}
           />
-          <div className="w-[130px]">{assignee}</div>
         </div>
-        <MoreHorizontal className="h-5 w-5 text-[#929299]" />
+        <div className="w-32 flex-shrink-0 text-sm">{assignee}</div>
+        <div className="ml-4 text-gray-400">
+          <MoreHorizontal className="h-5 w-5" />
+        </div>
       </div>
       {expanded && subTasks && subTasks.length > 0 && (
-        <div className="pl-[500px]">
+        <div className="pl-[400px]">
           {subTasks.map((subTask, index) => (
-            <div
+            <SubTask
               key={subTask.id}
-              className={
-                index === 0
-                  ? "rounded-t-[10px]"
-                  : index === subTasks.length - 1
-                    ? "rounded-b-[10px]"
-                    : ""
-              }
-            >
-              <SubTask
-                {...subTask}
-                onStatusChange={(status) => handleSubTaskStatusChange(subTask.id, status)}
-              />
-            </div>
+              {...subTask}
+              onStatusChange={(status) => handleSubTaskStatusChange(subTask.id, status)}
+            />
           ))}
         </div>
       )}
