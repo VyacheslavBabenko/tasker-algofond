@@ -28,6 +28,8 @@ interface TaskContextType {
   tasks: Task[];
   filteredTasks: Task[];
   activeFilter: string;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
   setFilter: (filter: string) => void;
   addTask: (task: Task) => void;
   updateTask: (id: string, updatedTask: Partial<Task>) => void;
@@ -142,13 +144,25 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined);
 export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [activeFilter, setActiveFilter] = useState<string>("Все");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const filteredTasks = tasks.filter((task) => {
+    // Apply search filter
+    const matchesSearch = 
+      searchTerm === "" || 
+      task.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.task.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.object.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.assignee.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (!matchesSearch) return false;
+    
+    // Apply category filter
     if (activeFilter === "Все") return true;
     if (activeFilter === task.date) return true;
     if (activeFilter === task.assignee) return true;
     
-    // Проверяем подзадачи
+    // Check subtasks
     if (task.subTasks) {
       return task.subTasks.some(subTask => subTask.assignee === activeFilter);
     }
@@ -196,6 +210,8 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         tasks,
         filteredTasks,
         activeFilter,
+        searchTerm,
+        setSearchTerm,
         setFilter,
         addTask,
         updateTask,
