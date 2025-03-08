@@ -1,41 +1,37 @@
+
 import React from "react";
 import StatusBadge from "./StatusBadge";
+import { MoreHorizontal } from "lucide-react";
+import { SubTask as SubTaskType } from "@/contexts/TaskContext";
 
-interface SubTaskProps {
-  object: string;
-  description: string;
-  status: "inProgress" | "take" | "check" | "blocked";
-  statusLabel: string;
-  assignee: string;
+interface SubTaskProps extends SubTaskType {
+  onStatusChange?: (id: string, status: "inProgress" | "take" | "check" | "blocked") => void;
 }
 
 const SubTask: React.FC<SubTaskProps> = ({
+  id,
   object,
   description,
   status,
   statusLabel,
   assignee,
+  onStatusChange
 }) => {
   return (
-    <div className="bg-[rgba(241,241,245,1)] flex w-full items-center gap-[40px_100px] justify-between flex-wrap pl-5 pr-10 py-5 max-md:max-w-full max-md:pr-5">
-      <div className="self-stretch flex min-w-60 items-center gap-[40px_60px] flex-wrap my-auto max-md:max-w-full">
-        <div className="self-stretch w-[210px] my-auto">{object}</div>
-        <div className="self-stretch flex min-w-60 gap-2.5 w-[400px] my-auto">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/f8950a79334b89aed54562a99c10d6b679052ac38bb1744193557ffb68f0b4cc?placeholderIfAbsent=true"
-            className="aspect-[0.86] object-contain w-[18px] shrink-0"
-            alt=""
-          />
-          <div className="flex-1 shrink basis-[0%]">{description}</div>
+    <div className="bg-[#f1f1f5] flex w-full items-center justify-between px-5 py-3">
+      <div className="flex items-center gap-8">
+        <div className="w-[210px]">{object}</div>
+        <div className="flex gap-2 items-center w-[400px]">
+          <div className="flex-1">{description}</div>
         </div>
-        <StatusBadge status={status} label={statusLabel} />
-        <div className="self-stretch w-[130px] my-auto">{assignee}</div>
+        <StatusBadge 
+          status={status} 
+          label={statusLabel} 
+          onStatusChange={onStatusChange ? () => onStatusChange(id, status) : undefined}
+        />
+        <div className="w-[130px]">{assignee}</div>
       </div>
-      <img
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/0ae3494ab197b90a7edf743e2f5560ea2d5175d43df3431fdcfe444fec624b68?placeholderIfAbsent=true"
-        className="aspect-[1] object-contain w-5 self-stretch shrink-0 my-auto"
-        alt=""
-      />
+      <MoreHorizontal className="h-5 w-5 text-gray-500" />
     </div>
   );
 };
