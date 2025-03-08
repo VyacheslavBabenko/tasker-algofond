@@ -1,11 +1,11 @@
 
 import React from "react";
 import StatusBadge from "./StatusBadge";
-import { MoreHorizontal } from "lucide-react";
+import { Circle, MoreHorizontal } from "lucide-react";
 import { SubTask as SubTaskType } from "@/contexts/TaskContext";
 
 interface SubTaskProps extends SubTaskType {
-  onStatusChange?: (id: string, status: "inProgress" | "take" | "check" | "blocked") => void;
+  onStatusChange?: (status: "inProgress" | "take" | "check" | "blocked") => void;
 }
 
 const SubTask: React.FC<SubTaskProps> = ({
@@ -18,20 +18,21 @@ const SubTask: React.FC<SubTaskProps> = ({
   onStatusChange
 }) => {
   return (
-    <div className="bg-[#f1f1f5] flex w-full items-center justify-between px-5 py-3">
-      <div className="flex items-center gap-8">
+    <div className="bg-[#f1f1f5] flex w-full items-center justify-between px-5 pr-10 py-5">
+      <div className="flex items-center gap-[60px]">
         <div className="w-[210px]">{object}</div>
-        <div className="flex gap-2 items-center w-[400px]">
-          <div className="flex-1">{description}</div>
+        <div className="flex gap-2.5 items-center w-[400px]">
+          <Circle className="h-[18px] w-[18px] fill-none stroke-current text-[#696974]" />
+          <div className="flex-1 text-left">{description}</div>
         </div>
         <StatusBadge 
           status={status} 
           label={statusLabel} 
-          onStatusChange={onStatusChange ? () => onStatusChange(id, status) : undefined}
+          onStatusChange={onStatusChange}
         />
         <div className="w-[130px]">{assignee}</div>
       </div>
-      <MoreHorizontal className="h-5 w-5 text-gray-500" />
+      <MoreHorizontal className="h-5 w-5 text-[#929299]" />
     </div>
   );
 };

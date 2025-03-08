@@ -31,34 +31,34 @@ const TaskItem: React.FC<TaskItemProps> = ({
     }
   };
 
-  const handleStatusChange = (status: "inProgress" | "take" | "check" | "blocked") => {
+  const handleStatusChange = (newStatus: "inProgress" | "take" | "check" | "blocked") => {
     if (onStatusChange) {
-      onStatusChange(id, status);
+      onStatusChange(id, newStatus);
     }
   };
 
-  const handleSubTaskStatusChange = (subTaskId: string, status: "inProgress" | "take" | "check" | "blocked") => {
+  const handleSubTaskStatusChange = (subTaskId: string, newStatus: "inProgress" | "take" | "check" | "blocked") => {
     if (onSubTaskStatusChange) {
-      onSubTaskStatusChange(id, subTaskId, status);
+      onSubTaskStatusChange(id, subTaskId, newStatus);
     }
   };
 
   return (
     <>
       <div
-        className="bg-white flex w-full items-center justify-between mt-1 pl-5 pr-5 py-3 rounded-lg cursor-pointer"
+        className="bg-white flex w-full items-center justify-between mt-2.5 pl-5 pr-10 py-5 rounded-[10px] cursor-pointer"
         onClick={toggleExpand}
       >
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-[60px]">
           <div className="w-[100px]">{id}</div>
           <div className="w-[100px]">{date}</div>
           <div className="w-[120px]">{result}</div>
           <div className="w-[210px]">{object}</div>
-          <div className="flex items-center gap-2 w-[400px] font-medium">
-            <Circle className="h-4 w-4 fill-current text-black" />
-            <div className="flex-1">{task}</div>
+          <div className="flex items-center gap-2.5 font-medium w-[400px]">
+            <Circle className="h-[18px] w-[18px] fill-current text-black" />
+            <div className="flex-1 text-left">{task}</div>
             {subTasks && subTasks.length > 0 && (
-              expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+              expanded ? <ChevronUp className="h-2.5 w-2.5" /> : <ChevronDown className="h-2.5 w-2.5" />
             )}
           </div>
           <StatusBadge 
@@ -68,7 +68,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           />
           <div className="w-[130px]">{assignee}</div>
         </div>
-        <MoreHorizontal className="h-5 w-5 text-gray-500" />
+        <MoreHorizontal className="h-5 w-5 text-[#929299]" />
       </div>
       {expanded && subTasks && subTasks.length > 0 && (
         <div className="pl-[500px]">
@@ -77,20 +77,15 @@ const TaskItem: React.FC<TaskItemProps> = ({
               key={subTask.id}
               className={
                 index === 0
-                  ? "rounded-t-lg"
+                  ? "rounded-t-[10px]"
                   : index === subTasks.length - 1
-                    ? "rounded-b-lg"
+                    ? "rounded-b-[10px]"
                     : ""
               }
             >
               <SubTask
-                id={subTask.id}
-                object={subTask.object}
-                description={subTask.description}
-                status={subTask.status}
-                statusLabel={subTask.statusLabel}
-                assignee={subTask.assignee}
-                onStatusChange={handleSubTaskStatusChange}
+                {...subTask}
+                onStatusChange={(status) => handleSubTaskStatusChange(subTask.id, status)}
               />
             </div>
           ))}

@@ -10,7 +10,7 @@ const TaskerApp: React.FC = () => {
     <TaskProvider>
       <div className="bg-[#f5f8f9] min-h-screen flex flex-col">
         <Header />
-        <div className="flex-1 px-5">
+        <div className="flex-1">
           <TaskList />
         </div>
         <FilterBar />
