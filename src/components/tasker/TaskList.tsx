@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import TaskItem from "./TaskItem";
 import { useTask } from "@/contexts/TaskContext";
@@ -167,8 +168,8 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
       </div>
       
       <div className="bg-[#2d2d2d] text-white">
-        <div className="flex h-[60px] px-6 items-center font-medium">
-          <div className="w-[60px] flex-shrink-0 flex items-center text-sm">
+        <div className="flex h-[60px] items-center font-medium">
+          <div className="w-[60px] flex-shrink-0 flex items-center justify-center text-sm">
             ID <Filter className="h-3 w-3 ml-1 text-gray-400" />
           </div>
           <div className="w-[100px] flex-shrink-0 flex items-center text-sm">
