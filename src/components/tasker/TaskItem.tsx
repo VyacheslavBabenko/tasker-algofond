@@ -54,7 +54,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
           <div className="w-[100px] flex-shrink-0 text-sm">{date}</div>
           <div className="w-[120px] flex-shrink-0 text-sm">{result}</div>
           <div className="w-[120px] flex-shrink-0 text-sm">{object}</div>
-          <div className="flex items-center gap-2 flex-1">
+          <div className="flex items-center gap-2 flex-1 pl-6">
             <Circle className="h-5 w-5 stroke-current stroke-1 text-gray-400" />
             <div className="flex-1 text-base font-medium text-left">{task}</div>
             {subTasks && subTasks.length > 0 && (

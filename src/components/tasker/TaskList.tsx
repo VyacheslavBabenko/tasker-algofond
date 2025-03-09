@@ -180,7 +180,7 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
           <div className="w-[120px] flex-shrink-0 flex items-center text-sm">
             Объект <Filter className="h-3 w-3 ml-1 text-gray-400" />
           </div>
-          <div className="flex-1 text-sm">
+          <div className="flex-1 text-sm flex items-center pl-8">
             Задача
           </div>
           <div className="w-[180px] flex-shrink-0 flex items-center text-sm">

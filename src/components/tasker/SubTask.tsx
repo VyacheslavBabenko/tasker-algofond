@@ -31,7 +31,7 @@ const SubTask: React.FC<SubTaskProps> = ({
           onStatusChange={onStatusChange}
         />
       </div>
-      <div className="w-32 flex-shrink-0 text-sm text-gray-600">{assignee}</div>
+      <div className="w-[120px] flex-shrink-0 text-sm text-gray-600">{assignee}</div>
       <div className="flex w-[60px] justify-center text-gray-400">
         <MoreHorizontal className="h-5 w-5" />
       </div>
