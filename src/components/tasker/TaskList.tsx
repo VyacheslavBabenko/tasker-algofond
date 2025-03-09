@@ -172,22 +172,22 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
           <div className="w-[60px] flex-shrink-0 flex items-center justify-center text-sm">
             ID <Filter className="h-3 w-3 ml-1 text-gray-400" />
           </div>
-          <div className="w-[100px] flex-shrink-0 flex items-center text-sm">
+          <div className="w-[100px] flex-shrink-0 flex items-center justify-center text-sm">
             Дата <Filter className="h-3 w-3 ml-1 text-gray-400" />
           </div>
-          <div className="w-[120px] flex-shrink-0 flex items-center text-sm">
+          <div className="w-[120px] flex-shrink-0 flex items-center justify-center text-sm">
             Результат <Filter className="h-3 w-3 ml-1 text-gray-400" />
           </div>
-          <div className="w-[120px] flex-shrink-0 flex items-center text-sm">
+          <div className="w-[120px] flex-shrink-0 flex items-center justify-center text-sm">
             Объект <Filter className="h-3 w-3 ml-1 text-gray-400" />
           </div>
-          <div className="flex-1 text-sm flex items-center pl-8">
+          <div className="flex-1 text-sm flex items-center justify-center">
             Задача
           </div>
-          <div className="w-[180px] flex-shrink-0 flex items-center text-sm">
+          <div className="w-[180px] flex-shrink-0 flex items-center justify-center text-sm">
             Статус <Filter className="h-3 w-3 ml-1 text-gray-400" />
           </div>
-          <div className="w-[120px] flex-shrink-0 flex items-center text-sm">
+          <div className="w-[120px] flex-shrink-0 flex items-center justify-center text-sm">
             Исполнитель <Filter className="h-3 w-3 ml-1 text-gray-400" />
           </div>
           <div className="w-[60px]"></div>
