@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import TaskItem from "./TaskItem";
 import { useTask } from "@/contexts/TaskContext";
@@ -101,6 +100,14 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
     updateSubTask(taskId, subTaskId, { status, statusLabel });
   };
 
+  const handleAssigneeChange = (id: string, assignee: string) => {
+    updateTask(id, { assignee });
+  };
+
+  const handleSubTaskAssigneeChange = (taskId: string, subTaskId: string, assignee: string) => {
+    updateSubTask(taskId, subTaskId, { assignee });
+  };
+
   const addField = () => {
     if (newField.name.trim()) {
       const newFieldObj: Field = {
@@ -201,6 +208,8 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
             {...task}
             onStatusChange={handleStatusChange}
             onSubTaskStatusChange={handleSubTaskStatusChange}
+            onAssigneeChange={handleAssigneeChange}
+            onSubTaskAssigneeChange={handleSubTaskAssigneeChange}
           />
         ))}
       </div>

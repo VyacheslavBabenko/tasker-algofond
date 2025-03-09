@@ -1,12 +1,21 @@
 
 import React from "react";
 import StatusBadge from "./StatusBadge";
-import { Circle, MoreHorizontal } from "lucide-react";
+import { Circle, MoreHorizontal, User } from "lucide-react";
 import { SubTask as SubTaskType } from "@/contexts/TaskContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 interface SubTaskProps extends SubTaskType {
   onStatusChange?: (status: "inProgress" | "take" | "check" | "blocked") => void;
+  onAssigneeChange?: (assignee: string) => void;
 }
+
+const assigneeOptions = ["Дима", "Денис", "Женя", "Саша", "Дэ Хан"];
 
 const SubTask: React.FC<SubTaskProps> = ({
   id,
@@ -15,7 +24,8 @@ const SubTask: React.FC<SubTaskProps> = ({
   status,
   statusLabel,
   assignee,
-  onStatusChange
+  onStatusChange,
+  onAssigneeChange
 }) => {
   return (
     <div className="flex items-center h-[60px] border-t border-gray-100">
@@ -31,7 +41,25 @@ const SubTask: React.FC<SubTaskProps> = ({
           onStatusChange={onStatusChange}
         />
       </div>
-      <div className="w-[120px] flex-shrink-0 text-sm text-gray-600">{assignee}</div>
+      <div className="w-[120px] flex-shrink-0 text-sm">
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100">
+            <User className="h-4 w-4 text-gray-500" />
+            <span>{assignee}</span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {assigneeOptions.map(option => (
+              <DropdownMenuItem 
+                key={option}
+                onClick={() => onAssigneeChange && onAssigneeChange(option)}
+                className={assignee === option ? "bg-gray-100" : ""}
+              >
+                {option}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       <div className="flex w-[60px] justify-center text-gray-400">
         <MoreHorizontal className="h-5 w-5" />
       </div>
