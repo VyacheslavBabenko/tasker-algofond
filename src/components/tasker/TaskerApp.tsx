@@ -1,19 +1,18 @@
 
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import Header from "./Header";
 import FilterBar from "./FilterBar";
-import TaskList from "./TaskList";
+import TaskList, { TaskListRef } from "./TaskList";
 import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TaskProvider } from "@/contexts/TaskContext";
 
 const TaskerApp: React.FC = () => {
-  const [showAddTask, setShowAddTask] = useState(false);
-  const [taskListRef, setTaskListRef] = useState<any>(null);
+  const taskListRef = useRef<TaskListRef>(null);
 
   const handleAddTaskClick = () => {
-    if (taskListRef && taskListRef.openAddTaskModal) {
-      taskListRef.openAddTaskModal();
+    if (taskListRef.current) {
+      taskListRef.current.openAddTaskModal();
     }
   };
 
@@ -27,7 +26,7 @@ const TaskerApp: React.FC = () => {
         <FilterBar onAddTask={handleAddTaskClick} />
         <TaskList 
           boardId="main" 
-          ref={(ref) => setTaskListRef(ref)}
+          ref={taskListRef}
         />
       </div>
     </TaskProvider>
