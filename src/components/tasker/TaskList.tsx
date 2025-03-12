@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import TaskItem from "./TaskItem";
 import { useTask } from "@/contexts/TaskContext";
 import { Filter, Plus } from "lucide-react";
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 type FieldType = "text" | "number" | "list";
 
@@ -47,14 +48,46 @@ interface TaskListProps {
   boardId: string;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
-  const { filteredTasks, updateTask, updateSubTask } = useTask();
+export interface TaskListRef {
+  openAddTaskModal: () => void;
+}
+
+const TaskList = forwardRef<TaskListRef, TaskListProps>(({ boardId }, ref) => {
+  const { filteredTasks, updateTask, updateSubTask, addTask } = useTask();
   const [fields, setFields] = useState<Field[]>(DEFAULT_FIELDS);
   const [showAddField, setShowAddField] = useState(false);
   const [newField, setNewField] = useState<{ name: string; type: FieldType }>({ name: "", type: "text" });
   const [selectedField, setSelectedField] = useState<Field | null>(null);
   const [showFieldSettings, setShowFieldSettings] = useState(false);
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
+  const [showAddTask, setShowAddTask] = useState(false);
+  const [newTask, setNewTask] = useState({
+    id: "",
+    date: "Март",
+    result: "",
+    object: "",
+    task: "",
+    status: "take",
+    statusLabel: "Взять",
+    assignee: "Дима"
+  });
+  const { toast } = useToast();
+
+  useImperativeHandle(ref, () => ({
+    openAddTaskModal: () => {
+      setNewTask({
+        id: `task_${Date.now()}`,
+        date: "Март",
+        result: "",
+        object: "",
+        task: "",
+        status: "take",
+        statusLabel: "Взять",
+        assignee: "Дима"
+      });
+      setShowAddTask(true);
+    }
+  }));
 
   const handleStatusChange = (id: string, status: "inProgress" | "take" | "check" | "blocked") => {
     let statusLabel = "";
@@ -161,11 +194,50 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
     });
   };
 
+  const openAddTaskModal = () => {
+    setNewTask({
+      id: `task_${Date.now()}`,
+      date: "Март",
+      result: "",
+      object: "",
+      task: "",
+      status: "take",
+      statusLabel: "Взять",
+      assignee: "Дима"
+    });
+    setShowAddTask(true);
+  };
+
+  const handleAddTask = () => {
+    if (newTask.object.trim() === "" || newTask.task.trim() === "") {
+      toast({
+        title: "Ошибка",
+        description: "Заполните обязательные поля: Объект и Задача",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    addTask(newTask);
+    setShowAddTask(false);
+    toast({
+      title: "Успешно",
+      description: "Задача добавлена"
+    });
+  };
+
   const finalFilteredTasks = getFilteredTasks();
 
   return (
     <div className="container max-w-full pb-6">
-      <div className="flex justify-end mb-5 px-6 pt-6">
+      <div className="flex justify-between mb-5 px-6 pt-6">
+        <Button 
+          className="bg-[#1e293b] hover:bg-[#0f172a] text-white gap-2 px-4 py-2 h-auto"
+          onClick={openAddTaskModal}
+        >
+          <Plus className="h-5 w-5" /> Добавить задачу
+        </Button>
+        
         <Button 
           className="bg-[#1e293b] hover:bg-[#0f172a] text-white gap-2 px-4 py-2 h-auto"
           onClick={() => setShowAddField(true)}
@@ -338,8 +410,104 @@ const TaskList: React.FC<TaskListProps> = ({ boardId }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Добавить задачу</DialogTitle>
+            <DialogDescription>Создайте новую задачу для вашей доски</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="taskObject" className="text-right">Объект *</label>
+              <Input
+                id="taskObject"
+                value={newTask.object}
+                onChange={(e) => setNewTask({...newTask, object: e.target.value})}
+                className="col-span-3"
+                placeholder="Введите объект"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="taskDescription" className="text-right">Задача *</label>
+              <Input
+                id="taskDescription"
+                value={newTask.task}
+                onChange={(e) => setNewTask({...newTask, task: e.target.value})}
+                className="col-span-3"
+                placeholder="Введите описание задачи"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="taskResult" className="text-right">Результат</label>
+              <Input
+                id="taskResult"
+                value={newTask.result}
+                onChange={(e) => setNewTask({...newTask, result: e.target.value})}
+                className="col-span-3"
+                placeholder="Введите ожидаемый результат"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="taskAssignee" className="text-right">Исполнитель</label>
+              <select
+                id="taskAssignee"
+                value={newTask.assignee}
+                onChange={(e) => setNewTask({...newTask, assignee: e.target.value})}
+                className="col-span-3 p-2 border rounded"
+              >
+                <option value="Дима">Дима</option>
+                <option value="Денис">Денис</option>
+                <option value="Женя">Женя</option>
+                <option value="Саша">Саша</option>
+                <option value="Дэ Хан">Дэ Хан</option>
+                <option value="Леша">Леша</option>
+                <option value="Николай">Николай</option>
+                <option value="Насим">Насим</option>
+                <option value="Коля">Коля</option>
+                <option value="Илья">Илья</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="taskStatus" className="text-right">Статус</label>
+              <select
+                id="taskStatus"
+                value={newTask.status}
+                onChange={(e) => {
+                  const status = e.target.value as "inProgress" | "take" | "check" | "blocked";
+                  let statusLabel = "";
+                  switch (status) {
+                    case "inProgress": statusLabel = "В работе"; break;
+                    case "take": statusLabel = "Взять"; break;
+                    case "check": statusLabel = "Проверить"; break;
+                    case "blocked": statusLabel = "Блок софта"; break;
+                  }
+                  setNewTask({...newTask, status, statusLabel});
+                }}
+                className="col-span-3 p-2 border rounded"
+              >
+                <option value="inProgress">В работе</option>
+                <option value="take">Взять</option>
+                <option value="check">Проверить</option>
+                <option value="blocked">Блок софта</option>
+              </select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setShowAddTask(false)}>
+              Отмена
+            </Button>
+            <Button type="submit" onClick={handleAddTask}>
+              Добавить
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-};
+});
+
+TaskList.displayName = "TaskList";
 
 export default TaskList;
+

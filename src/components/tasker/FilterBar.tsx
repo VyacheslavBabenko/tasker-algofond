@@ -29,7 +29,11 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   );
 };
 
-const FilterBar: React.FC = () => {
+interface FilterBarProps {
+  onAddTask?: () => void;
+}
+
+const FilterBar: React.FC<FilterBarProps> = ({ onAddTask }) => {
   const { activeFilter, setFilter } = useTask();
   
   const filters = [
@@ -47,17 +51,12 @@ const FilterBar: React.FC = () => {
     { name: "Илья", width: "w-[109px]" }
   ];
 
-  const handleAddTask = () => {
-    // Функция добавления задачи
-    console.log("Добавление новой задачи");
-  };
-
   return (
     <div className="flex w-full mt-10">
       <div className="bg-white flex items-center gap-2.5 p-4 border-t border-r border-[#e3e3e3]">
         <button 
           className="bg-[#f1f1f5] p-3 rounded-[10px]"
-          onClick={handleAddTask}
+          onClick={onAddTask}
         >
           <Plus className="h-3.5 w-3.5" />
         </button>
