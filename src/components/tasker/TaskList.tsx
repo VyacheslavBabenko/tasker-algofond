@@ -1,3 +1,4 @@
+
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import TaskItem from "./TaskItem";
 import { useTask } from "@/contexts/TaskContext";
@@ -67,7 +68,7 @@ const TaskList = forwardRef<TaskListRef, TaskListProps>(({ boardId }, ref) => {
     result: "",
     object: "",
     task: "",
-    status: "take",
+    status: "take" as "inProgress" | "take" | "check" | "blocked",
     statusLabel: "Взять",
     assignee: "Дима"
   });
@@ -81,7 +82,7 @@ const TaskList = forwardRef<TaskListRef, TaskListProps>(({ boardId }, ref) => {
         result: "",
         object: "",
         task: "",
-        status: "take",
+        status: "take" as "inProgress" | "take" | "check" | "blocked",
         statusLabel: "Взять",
         assignee: "Дима"
       });
@@ -201,7 +202,7 @@ const TaskList = forwardRef<TaskListRef, TaskListProps>(({ boardId }, ref) => {
       result: "",
       object: "",
       task: "",
-      status: "take",
+      status: "take" as "inProgress" | "take" | "check" | "blocked",
       statusLabel: "Взять",
       assignee: "Дима"
     });
@@ -510,4 +511,3 @@ const TaskList = forwardRef<TaskListRef, TaskListProps>(({ boardId }, ref) => {
 TaskList.displayName = "TaskList";
 
 export default TaskList;
-
