@@ -1,69 +1,121 @@
-# Welcome to your Lovable project
+# Tasker - Управление задачами
 
-## Project info
+Приложение для управления задачами с возможностью создания, редактирования и отслеживания задач и подзадач.
 
-**URL**: https://lovable.dev/projects/de88ae90-4be6-4f71-9eba-329b474ae17b
+## Технологии
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/de88ae90-4be6-4f71-9eba-329b474ae17b) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
+### Фронтенд
 
 - Vite
 - TypeScript
 - React
-- shadcn-ui
 - Tailwind CSS
+- shadcn/ui
+- DnD-kit (для drag-and-drop)
 
-## How can I deploy this project?
+### Бэкенд
 
-Simply open [Lovable](https://lovable.dev/projects/de88ae90-4be6-4f71-9eba-329b474ae17b) and click on Share -> Publish.
+- Node.js
+- Express
+- PostgreSQL
+- Sequelize ORM
 
-## I want to use a custom domain - is that possible?
+## Запуск проекта
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+### Запуск с помощью Docker Compose (рекомендуется)
+
+Для запуска всего стека (база данных, бэкенд и фронтенд) используйте Docker Compose:
+
+```bash
+# Запуск всего стека
+docker-compose up
+
+# Для запуска в фоновом режиме
+docker-compose up -d
+
+# Для остановки
+docker-compose down
+```
+
+Приложение будет доступно по адресу:
+
+- Фронтенд: http://localhost:5173
+- API: http://localhost:3001
+
+### Локальный запуск (без Docker)
+
+#### Запуск базы данных
+
+1. Установите PostgreSQL
+2. Создайте базу данных `tasker_db`
+
+#### Запуск бэкенда
+
+```bash
+# Перейти в папку сервера
+cd server
+
+# Установить зависимости
+npm install
+
+# Запустить сервер в режиме разработки
+npm run dev
+
+# Заполнить базу тестовыми данными (при необходимости)
+npm run seed
+```
+
+#### Запуск фронтенда
+
+```bash
+# Установить зависимости
+npm install
+
+# Запустить сервер разработки
+npm run dev
+```
+
+## Структура проекта
+
+```
+tasker/
+  ├── src/                   # Исходный код фронтенда
+  │   ├── components/        # React компоненты
+  │   ├── contexts/          # React контексты
+  │   ├── hooks/             # React хуки
+  │   └── lib/               # Вспомогательные функции
+  ├── server/                # Бэкенд
+  │   ├── src/
+  │   │   ├── config/        # Конфигурация
+  │   │   ├── controllers/   # Контроллеры
+  │   │   ├── middleware/    # Middleware
+  │   │   ├── models/        # Модели данных
+  │   │   ├── routes/        # Маршруты API
+  │   │   ├── services/      # Сервисы
+  │   │   ├── utils/         # Утилиты
+  │   │   └── index.js       # Точка входа
+  │   ├── .env               # Переменные окружения
+  │   └── package.json       # Зависимости бэкенда
+  ├── docker-compose.yml     # Docker Compose конфигурация
+  ├── Dockerfile             # Dockerfile для фронтенда
+  └── package.json           # Зависимости фронтенда
+```
+
+## API Endpoints
+
+### Задачи
+
+- `GET /api/tasks` - получить все задачи
+- `GET /api/tasks/:id` - получить задачу по ID
+- `POST /api/tasks` - создать новую задачу
+- `PUT /api/tasks/:id` - обновить задачу
+- `DELETE /api/tasks/:id` - удалить задачу
+- `POST /api/tasks/reorder` - изменить порядок задач
+
+### Подзадачи
+
+- `GET /api/tasks/:taskId/subtasks` - получить все подзадачи для задачи
+- `GET /api/tasks/subtasks/:id` - получить подзадачу по ID
+- `POST /api/tasks/subtasks` - создать новую подзадачу
+- `PUT /api/tasks/subtasks/:id` - обновить подзадачу
+- `DELETE /api/tasks/subtasks/:id` - удалить подзадачу

@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14-alpine
+    container_name: tasker-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tasker_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tasker-network
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: tasker-backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - PORT=3001
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=tasker_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - CORS_ORIGIN=http://localhost:5173
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - tasker-network
+    command: >
+      sh -c "npm run dev"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tasker-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    networks:
+      - tasker-network
+    command: >
+      sh -c "npm run dev"
+
+networks:
+  tasker-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
