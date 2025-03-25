@@ -8,7 +8,10 @@ import React, {
 import { useToast } from "@/hooks/use-toast";
 
 // API URL
-const API_URL = "http://localhost:3001/api";
+const API_URL =
+	process.env.NODE_ENV === "production"
+		? "http://167.172.39.56:3002/api"
+		: "http://localhost:3002/api";
 
 // Функция для выполнения API запросов
 const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
