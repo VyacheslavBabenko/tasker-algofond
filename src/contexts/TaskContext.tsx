@@ -26,18 +26,30 @@ export interface Task {
 	status: StatusType;
 	statusLabel: string;
 	assignee: string;
+	projectId?: string;
 	subTasks?: SubTask[];
 	order?: number;
+}
+
+export interface TeamMember {
+	id: string;
+	name: string;
+	role: string;
+	email?: string;
+	avatar?: string;
 }
 
 interface TaskContextType {
 	tasks: Task[];
 	filteredTasks: Task[];
+	teamMembers: TeamMember[];
 	activeFilter: string;
 	searchTerm: string;
 	isLoading: boolean;
+	currentProjectId: string | null;
 	setSearchTerm: (term: string) => void;
 	setFilter: (filter: string) => void;
+	setCurrentProjectId: (projectId: string | null) => void;
 	addTask: (task: Omit<Task, "id">) => Promise<void>;
 	updateTask: (id: string, updatedTask: Partial<Task>) => Promise<void>;
 	updateSubTask: (
@@ -52,6 +64,13 @@ interface TaskContextType {
 		startIndex: number,
 		endIndex: number
 	) => Promise<void>;
+	addTeamMember: (member: Omit<TeamMember, "id">) => Promise<void>;
+	updateTeamMember: (
+		id: string,
+		updatedMember: Partial<TeamMember>
+	) => Promise<void>;
+	deleteTeamMember: (id: string) => Promise<void>;
+	getTasksCountByProject: (projectId: string) => number;
 }
 
 // API URL
@@ -88,16 +107,44 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
 	const [tasks, setTasks] = useState<Task[]>([]);
+	const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
+		{ id: "1", name: "Дима", role: "Разработчик", email: "dima@example.com" },
+		{ id: "2", name: "Денис", role: "Дизайнер", email: "denis@example.com" },
+		{ id: "3", name: "Женя", role: "Менеджер", email: "zhenya@example.com" },
+		{ id: "4", name: "Саша", role: "Разработчик", email: "sasha@example.com" },
+		{ id: "5", name: "Дэ Хан", role: "Аналитик", email: "dehan@example.com" },
+		{ id: "6", name: "Леша", role: "Тестировщик", email: "lesha@example.com" },
+		{ id: "7", name: "Коля", role: "Разработчик", email: "kolya@example.com" },
+	]);
 	const [activeFilter, setActiveFilter] = useState<string>("Все");
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [currentProjectId, setCurrentProjectId] = useState<string | null>(
+		() => {
+			// Восстанавливаем ID проекта из localStorage при инициализации
+			const savedProjectId = localStorage.getItem("currentProjectId");
+			return savedProjectId || "project-1";
+		}
+	);
 
-	// Загрузка задач при монтировании компонента
+	// Сохраняем ID текущего проекта в localStorage при его изменении
+	useEffect(() => {
+		if (currentProjectId) {
+			localStorage.setItem("currentProjectId", currentProjectId);
+		} else {
+			localStorage.removeItem("currentProjectId");
+		}
+	}, [currentProjectId]);
+
+	// Загрузка задач при монтировании компонента или изменении проекта
 	useEffect(() => {
 		const fetchTasks = async () => {
 			try {
 				setIsLoading(true);
-				const data = await fetchAPI("/tasks");
+				const endpoint = currentProjectId
+					? `/tasks?projectId=${encodeURIComponent(currentProjectId)}`
+					: "/tasks";
+				const data = await fetchAPI(endpoint);
 				setTasks(data);
 			} catch (error) {
 				console.error("Ошибка при загрузке задач:", error);
@@ -107,7 +154,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
 		};
 
 		fetchTasks();
-	}, []);
+	}, [currentProjectId]);
 
 	const sortTasksByOrder = (tasksToSort: Task[]): Task[] => {
 		return [...tasksToSort].sort((a, b) => {
@@ -126,15 +173,25 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
 				task.object.toLowerCase().includes(searchTerm.toLowerCase()) ||
 				task.assignee.toLowerCase().includes(searchTerm.toLowerCase());
 
+			// Если указан конкретный проект, фильтруем задачи только этого проекта
+			if (currentProjectId && task.projectId !== currentProjectId) {
+				return false;
+			}
+
 			if (!matchesSearch) return false;
 
 			if (activeFilter === "Все") return true;
 			if (activeFilter === task.date) return true;
 			if (activeFilter === task.assignee) return true;
+			if (activeFilter === task.status) return true;
+			if (activeFilter === task.statusLabel) return true;
 
 			if (task.subTasks) {
 				return task.subTasks.some(
-					(subTask) => subTask.assignee === activeFilter
+					(subTask) =>
+						subTask.assignee === activeFilter ||
+						subTask.status === activeFilter ||
+						subTask.statusLabel === activeFilter
 				);
 			}
 
@@ -149,9 +206,15 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
 	const addTask = async (task: Omit<Task, "id">) => {
 		try {
 			setIsLoading(true);
+			// Если указан текущий проект, добавляем его к задаче
+			const taskWithProject = {
+				...task,
+				projectId: currentProjectId || "project-1",
+			};
+
 			const newTask = await fetchAPI("/tasks", {
 				method: "POST",
-				body: JSON.stringify(task),
+				body: JSON.stringify(taskWithProject),
 			});
 
 			setTasks([...tasks, newTask]);
@@ -271,34 +334,78 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
 	) => {
 		try {
 			setIsLoading(true);
+			// Добавляем projectId при необходимости
+			const reorderData = {
+				taskId,
+				startIndex,
+				endIndex,
+				projectId: currentProjectId || undefined,
+			};
 
-			// Оптимистичное обновление UI
-			const result = Array.from(tasks);
-			const [removed] = result.splice(startIndex, 1);
-			result.splice(endIndex, 0, removed);
-
-			// Обновляем порядок в UI
-			setTasks(result.map((task, index) => ({ ...task, order: index })));
-
-			// Отправляем запрос на сервер
 			const updatedTasks = await fetchAPI("/tasks/reorder", {
-				method: "POST",
-				body: JSON.stringify({ taskId, startIndex, endIndex }),
+				method: "PUT",
+				body: JSON.stringify(reorderData),
 			});
 
-			// Обновляем состояние после ответа сервера
 			setTasks(updatedTasks);
 		} catch (error) {
 			console.error("Ошибка при изменении порядка задач:", error);
-
-			// Загружаем актуальное состояние с сервера
-			const data = await fetchAPI("/tasks");
-			setTasks(data);
-
 			throw error;
 		} finally {
 			setIsLoading(false);
 		}
+	};
+
+	// Функция для добавления нового члена команды
+	const addTeamMember = async (member: Omit<TeamMember, "id">) => {
+		try {
+			// В реальном приложении здесь был бы API запрос
+			const newMember: TeamMember = {
+				...member,
+				id: `member_${Date.now()}`,
+			};
+			setTeamMembers([...teamMembers, newMember]);
+			return Promise.resolve();
+		} catch (error) {
+			console.error("Ошибка при добавлении члена команды:", error);
+			return Promise.reject(error);
+		}
+	};
+
+	// Функция для обновления члена команды
+	const updateTeamMember = async (
+		id: string,
+		updatedMember: Partial<TeamMember>
+	) => {
+		try {
+			// В реальном приложении здесь был бы API запрос
+			setTeamMembers(
+				teamMembers.map((member) =>
+					member.id === id ? { ...member, ...updatedMember } : member
+				)
+			);
+			return Promise.resolve();
+		} catch (error) {
+			console.error("Ошибка при обновлении члена команды:", error);
+			return Promise.reject(error);
+		}
+	};
+
+	// Функция для удаления члена команды
+	const deleteTeamMember = async (id: string) => {
+		try {
+			// В реальном приложении здесь был бы API запрос
+			setTeamMembers(teamMembers.filter((member) => member.id !== id));
+			return Promise.resolve();
+		} catch (error) {
+			console.error("Ошибка при удалении члена команды:", error);
+			return Promise.reject(error);
+		}
+	};
+
+	// Функция для получения количества задач для проекта
+	const getTasksCountByProject = (projectId: string): number => {
+		return tasks.filter((task) => task.projectId === projectId).length;
 	};
 
 	return (
@@ -306,17 +413,24 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({
 			value={{
 				tasks,
 				filteredTasks,
+				teamMembers,
 				activeFilter,
 				searchTerm,
 				isLoading,
+				currentProjectId,
 				setSearchTerm,
 				setFilter,
+				setCurrentProjectId,
 				addTask,
 				updateTask,
 				updateSubTask,
 				deleteTask,
 				addSubTask,
 				reorderTasks,
+				addTeamMember,
+				updateTeamMember,
+				deleteTeamMember,
+				getTasksCountByProject,
 			}}
 		>
 			{children}

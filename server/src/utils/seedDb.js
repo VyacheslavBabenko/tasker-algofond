@@ -1,6 +1,16 @@
-import { Task, SubTask } from "../models/index.js";
+import { Task, SubTask, Project } from "../models/index.js";
 import sequelize from "../config/database.js";
 import { fileURLToPath } from "url";
+
+const initialProjects = [
+	{
+		id: "project-1",
+		name: "Основной проект",
+		description: "Первый проект команды",
+		createdAt: new Date(2023, 2, 15),
+		tasksCount: 12,
+	},
+];
 
 const initialTasks = [
 	{
@@ -13,6 +23,7 @@ const initialTasks = [
 		statusLabel: "В работе",
 		assignee: "Дима",
 		order: 0,
+		projectId: "project-1",
 		subTasks: [
 			{
 				object: "Рейтинг",
@@ -41,6 +52,7 @@ const initialTasks = [
 		statusLabel: "Проверить",
 		assignee: "Денис",
 		order: 1,
+		projectId: "project-1",
 	},
 	{
 		id: "16",
@@ -52,6 +64,7 @@ const initialTasks = [
 		statusLabel: "Блок софта",
 		assignee: "Дэ Хан",
 		order: 2,
+		projectId: "project-1",
 	},
 	{
 		id: "23",
@@ -63,6 +76,7 @@ const initialTasks = [
 		statusLabel: "Проверить",
 		assignee: "Денис",
 		order: 3,
+		projectId: "project-1",
 	},
 	{
 		id: "33",
@@ -74,6 +88,7 @@ const initialTasks = [
 		statusLabel: "Проверить",
 		assignee: "Денис",
 		order: 4,
+		projectId: "project-1",
 	},
 	{
 		id: "43",
@@ -85,6 +100,7 @@ const initialTasks = [
 		statusLabel: "Проверить",
 		assignee: "Денис",
 		order: 5,
+		projectId: "project-1",
 	},
 	{
 		id: "53",
@@ -96,6 +112,7 @@ const initialTasks = [
 		statusLabel: "Проверить",
 		assignee: "Денис",
 		order: 6,
+		projectId: "project-1",
 	},
 	{
 		id: "63",
@@ -107,6 +124,7 @@ const initialTasks = [
 		statusLabel: "Проверить",
 		assignee: "Денис",
 		order: 7,
+		projectId: "project-1",
 	},
 ];
 
@@ -117,6 +135,12 @@ const seedDatabase = async () => {
 		// Сбрасываем и синхронизируем модели с базой данных
 		await sequelize.sync({ force: true });
 		console.log("База данных очищена и схемы созданы заново");
+
+		// Создаем проекты
+		for (const projectData of initialProjects) {
+			await Project.create(projectData);
+		}
+		console.log("Проекты созданы");
 
 		// Создаем задачи
 		for (const taskData of initialTasks) {

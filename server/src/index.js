@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import sequelize from "./config/database.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
 
 // Загрузка переменных окружения
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.json());
 
 // Маршруты
 app.use("/api/tasks", taskRoutes);
+app.use("/api/projects", projectRoutes);
 
 // Проверка здоровья сервера
 app.get("/health", (req, res) => {

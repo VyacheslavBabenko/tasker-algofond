@@ -43,6 +43,11 @@ const Task = sequelize.define(
 			type: DataTypes.INTEGER,
 			allowNull: true,
 		},
+		projectId: {
+			type: DataTypes.STRING,
+			allowNull: true,
+			defaultValue: "project-1", // По умолчанию будет использоваться основной проект
+		},
 	},
 	{
 		tableName: "tasks",

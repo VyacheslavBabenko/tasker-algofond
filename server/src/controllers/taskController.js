@@ -3,7 +3,12 @@ import { Task, SubTask } from "../models/index.js";
 // Получить все задачи с подзадачами
 export const getAllTasks = async (req, res) => {
 	try {
+		const { projectId } = req.query;
+
+		const whereCondition = projectId ? { projectId } : {};
+
 		const tasks = await Task.findAll({
+			where: whereCondition,
 			include: [
 				{
 					model: SubTask,
@@ -60,11 +65,20 @@ export const getTaskById = async (req, res) => {
 // Создать новую задачу
 export const createTask = async (req, res) => {
 	try {
-		const { date, result, object, task, status, statusLabel, assignee } =
-			req.body;
+		const {
+			date,
+			result,
+			object,
+			task,
+			status,
+			statusLabel,
+			assignee,
+			projectId,
+		} = req.body;
 
-		// Получить максимальный текущий порядок
+		// Получить максимальный текущий порядок в рамках проекта
 		const maxOrderTask = await Task.findOne({
+			where: { projectId: projectId || "project-1" },
 			order: [["order", "DESC"]],
 		});
 
@@ -78,6 +92,7 @@ export const createTask = async (req, res) => {
 			status,
 			statusLabel,
 			assignee,
+			projectId: projectId || "project-1",
 			order: newOrder,
 		});
 
@@ -161,7 +176,7 @@ export const deleteTask = async (req, res) => {
 // Изменить порядок задач
 export const reorderTasks = async (req, res) => {
 	try {
-		const { taskId, startIndex, endIndex } = req.body;
+		const { taskId, startIndex, endIndex, projectId } = req.body;
 
 		// Находим задачу, которую нужно переместить
 		const taskToMove = await Task.findByPk(taskId);
@@ -173,8 +188,13 @@ export const reorderTasks = async (req, res) => {
 			});
 		}
 
-		// Получаем все задачи, отсортированные по порядку
+		// Получаем все задачи в рамках проекта, отсортированные по порядку
+		const whereCondition = projectId
+			? { projectId }
+			: { projectId: taskToMove.projectId };
+
 		const allTasks = await Task.findAll({
+			where: whereCondition,
 			order: [["order", "ASC"]],
 		});
 
@@ -202,6 +222,7 @@ export const reorderTasks = async (req, res) => {
 
 		// Получаем обновленный список задач
 		const updatedTasks = await Task.findAll({
+			where: whereCondition,
 			include: [
 				{
 					model: SubTask,
@@ -217,6 +238,33 @@ export const reorderTasks = async (req, res) => {
 		return res.status(500).json({
 			error: true,
 			message: "Не удалось изменить порядок задач",
+		});
+	}
+};
+
+// Получить количество задач для проекта
+export const getTasksCountByProject = async (req, res) => {
+	try {
+		const { projectId } = req.query;
+
+		if (!projectId) {
+			return res.status(400).json({
+				error: true,
+				message: "Не указан ID проекта",
+			});
+		}
+
+		const count = await Task.count({
+			where: { projectId },
+		});
+
+		return res.status(200).json({ count });
+	} catch (error) {
+		console.error("Ошибка при получении количества задач:", error);
+		return res.status(500).json({
+			error: true,
+			message: "Не удалось получить количество задач",
+			details: error.message,
 		});
 	}
 };

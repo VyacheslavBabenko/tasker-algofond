@@ -6,6 +6,7 @@ const router = express.Router();
 
 // Маршруты для задач
 router.get("/", taskController.getAllTasks);
+router.get("/count", taskController.getTasksCountByProject);
 router.get("/:id", taskController.getTaskById);
 router.post("/", taskController.createTask);
 router.put("/:id", taskController.updateTask);
